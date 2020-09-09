@@ -11,6 +11,9 @@ import pymysql
 from flask import Flask, request
 app = Flask(__name__)
 
+temp = 10
+vlazh = 10
+battery = 10
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -23,6 +26,18 @@ sessionStorage = {}
 def main():
     # Функция получает тело запроса и возвращает ответ.
     logging.info('Request: %r', request.json)
+    global temp
+    global vlazh
+    global battery
+    con = pymysql.connect('f0469046.xsph.ru', 'f0469046_temp',
+                          '2234562', 'f0469046_data')
+    cur = con.cursor()
+    cur.execute("SELECT * FROM data ORDER BY date DESC")
+    rows = cur.fetchall()
+    latest = rows[0]
+    temp = latest[1]
+    vlazh = latest[2]
+    battery = latest[3]
 
     response = {
         "version": request.json['version'],
@@ -59,6 +74,7 @@ def handle_dialog(req, res):
         }
 
         res['response']['text'] = 'Здравствуй! Что тебе назвать?'
+
         res['response']['buttons'] = get_suggests(user_id)
         return
 
@@ -70,15 +86,7 @@ def handle_dialog(req, res):
         'температура в комнате',
     ]:
         # Пользователь согласился, прощаемся.
-        con = pymysql.connect('f0469046.xsph.ru', 'f0469046_temp',
-                              '2234562', 'f0469046_data')
-        cur = con.cursor()
-        cur.execute("SELECT * FROM data ORDER BY date DESC")
-        rows = cur.fetchall()
-        latest = rows[0]
-        temp = latest[1]
-        vlazh = latest[2]
-        battery = latest[3]
+        global temp
         res['response']['text'] = 'В вашей комнате сейчас '+ temp + ' градусов'
         return
 
@@ -89,15 +97,7 @@ def handle_dialog(req, res):
         'скажи влажность в комнате',
     ]:
         # Пользователь согласился, прощаемся.
-        con = pymysql.connect('f0469046.xsph.ru', 'f0469046_temp',
-                              '2234562', 'f0469046_data')
-        cur = con.cursor()
-        cur.execute("SELECT * FROM data ORDER BY date DESC")
-        rows = cur.fetchall()
-        latest = rows[0]
-        temp = latest[1]
-        vlazh = latest[2]
-        battery = latest[3]
+        global vlazh
         res['response']['text'] = 'В вашей комнате сейчас '+ vlazh + ' процентов влажности.'
         return
 
@@ -108,15 +108,7 @@ def handle_dialog(req, res):
         'остаток батареи',
     ]:
         # Пользователь согласился, прощаемся.
-        con = pymysql.connect('f0469046.xsph.ru', 'f0469046_temp',
-                              '2234562', 'f0469046_data')
-        cur = con.cursor()
-        cur.execute("SELECT * FROM data ORDER BY date DESC")
-        rows = cur.fetchall()
-        latest = rows[0]
-        temp = latest[1]
-        vlazh = latest[2]
-        battery = latest[3]
+        global battery
         res['response']['text'] = 'У датчика '+ battery + ' процентов заряда баттареи.'
         return
 
@@ -127,15 +119,9 @@ def handle_dialog(req, res):
         'микроклимат',
     ]:
         # Пользователь согласился, прощаемся .
-        con = pymysql.connect('f0469046.xsph.ru', 'f0469046_temp',
-                              '2234562', 'f0469046_data')
-        cur = con.cursor()
-        cur.execute("SELECT * FROM data ORDER BY date DESC")
-        rows = cur.fetchall()
-        latest = rows[0]
-        temp = latest[1]
-        vlazh = latest[2]
-        battery = latest[3]
+        global temp
+        global vlazh
+        global battery
         res['response']['text'] = 'У вас в комнате '+ temp + ' градусов и ' + vlazh + ' процентов влажности. Заряд батареи ' + battery + ' процентов.'
         return
 
