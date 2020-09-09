@@ -117,7 +117,7 @@ def handle_dialog(req, res):
         temp = latest[1]
         vlazh = latest[2]
         battery = latest[3]
-        res['response']['text'] = 'У датчика '+ str(battery) + ' процентов заряда баттареи.'
+        res['response']['text'] = 'У датчика '+ str(battery) + ' процентов заряда баттареи. '
         return
 
     if req['request']['original_utterance'].lower() in [
