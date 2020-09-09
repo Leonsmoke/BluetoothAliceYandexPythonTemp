@@ -5,6 +5,7 @@ from __future__ import unicode_literals
 # Импортируем модули для работы с JSON и логами.
 import json
 import logging
+import pymysql
 
 # Импортируем подмодули Flask для запуска веб-сервиса.
 from flask import Flask, request
@@ -51,29 +52,95 @@ def handle_dialog(req, res):
 
         sessionStorage[user_id] = {
             'suggests': [
-                "Не хочу.",
-                "Не буду.",
-                "Отстань!",
+                "температуру",
+                "влажность",
+                "полный отчёт",
             ]
         }
 
-        res['response']['text'] = 'Привет! Купи слона!'
+        res['response']['text'] = 'Здравствуй! Что тебе назвать?'
         res['response']['buttons'] = get_suggests(user_id)
         return
 
     # Обрабатываем ответ пользователя.
     if req['request']['original_utterance'].lower() in [
-        'ладно',
-        'куплю',
-        'покупаю',
-        'хорошо',
+        'температуру',
+        'температуру в комнате',
+        'какая температура в комнате',
+        'температура в комнате',
     ]:
         # Пользователь согласился, прощаемся.
-        res['response']['text'] = 'Слона можно найти на Яндекс.Маркете!'
+        con = pymysql.connect('f0469046.xsph.ru', 'f0469046_temp',
+                              '2234562', 'f0469046_data')
+        cur = con.cursor()
+        cur.execute("SELECT * FROM data ORDER BY date DESC")
+        rows = cur.fetchall()
+        latest = rows[0]
+        temp = latest[1]
+        vlazh = latest[2]
+        battery = latest[3]
+        res['response']['text'] = 'В вашей комнате сейчас '+ temp + ' градусов'
+        return
+
+    if req['request']['original_utterance'].lower() in [
+        'влажность',
+        'влажность в комнате',
+        'какая влажность в комнате',
+        'скажи влажность в комнате',
+    ]:
+        # Пользователь согласился, прощаемся.
+        con = pymysql.connect('f0469046.xsph.ru', 'f0469046_temp',
+                              '2234562', 'f0469046_data')
+        cur = con.cursor()
+        cur.execute("SELECT * FROM data ORDER BY date DESC")
+        rows = cur.fetchall()
+        latest = rows[0]
+        temp = latest[1]
+        vlazh = latest[2]
+        battery = latest[3]
+        res['response']['text'] = 'В вашей комнате сейчас '+ vlazh + ' процентов влажности.'
+        return
+
+    if req['request']['original_utterance'].lower() in [
+        'заряд у датчиков',
+        'заряд датчиков',
+        'заряд батареи',
+        'остаток батареи',
+    ]:
+        # Пользователь согласился, прощаемся.
+        con = pymysql.connect('f0469046.xsph.ru', 'f0469046_temp',
+                              '2234562', 'f0469046_data')
+        cur = con.cursor()
+        cur.execute("SELECT * FROM data ORDER BY date DESC")
+        rows = cur.fetchall()
+        latest = rows[0]
+        temp = latest[1]
+        vlazh = latest[2]
+        battery = latest[3]
+        res['response']['text'] = 'У датчика '+ battery + ' процентов заряда баттареи.'
+        return
+
+    if req['request']['original_utterance'].lower() in [
+        'скажи всё',
+        'полный отчёт',
+        'состояние комнаты',
+        'микроклимат',
+    ]:
+        # Пользователь согласился, прощаемся.
+        con = pymysql.connect('f0469046.xsph.ru', 'f0469046_temp',
+                              '2234562', 'f0469046_data')
+        cur = con.cursor()
+        cur.execute("SELECT * FROM data ORDER BY date DESC")
+        rows = cur.fetchall()
+        latest = rows[0]
+        temp = latest[1]
+        vlazh = latest[2]
+        battery = latest[3]
+        res['response']['text'] = 'У вас в комнате '+ temp + ' градусов и ' + vlazh + ' процентов влажности. Заряд батареи ' + battery + ' процентов.'
         return
 
     # Если нет, то убеждаем его купить слона!
-    res['response']['text'] = 'Все говорят "%s", а ты купи слона!' % (
+    res['response']['text'] = 'А Костя всё равно негодяй!' % (
         req['request']['original_utterance']
     )
     res['response']['buttons'] = get_suggests(user_id)
