@@ -140,9 +140,7 @@ def handle_dialog(req, res):
         return
 
     # Если нет, то убеждаем его купить слона!
-    res['response']['text'] = 'А Костя всё равно негодяй!' % (
-        req['request']['original_utterance']
-    )
+    res['response']['text'] = 'А Костя всё равно негодяй!'
     res['response']['buttons'] = get_suggests(user_id)
 
 # Функция возвращает две подсказки для ответа.
