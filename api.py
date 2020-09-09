@@ -79,7 +79,7 @@ def handle_dialog(req, res):
         temp = latest[1]
         vlazh = latest[2]
         battery = latest[3]
-        res['response']['text'] = 'В вашей комнате сейчас '+ temp + ' градусов'
+        res['response']['text'] = 'В вашей комнате сейчас '+ str(temp) + ' градусов'
         return
 
     if req['request']['original_utterance'].lower() in [
@@ -98,7 +98,7 @@ def handle_dialog(req, res):
         temp = latest[1]
         vlazh = latest[2]
         battery = latest[3]
-        res['response']['text'] = 'В вашей комнате сейчас '+ vlazh + ' процентов влажности.'
+        res['response']['text'] = 'В вашей комнате сейчас '+ str(vlazh) + ' процентов влажности.'
         return
 
     if req['request']['original_utterance'].lower() in [
@@ -117,7 +117,7 @@ def handle_dialog(req, res):
         temp = latest[1]
         vlazh = latest[2]
         battery = latest[3]
-        res['response']['text'] = 'У датчика '+ battery + ' процентов заряда баттареи.'
+        res['response']['text'] = 'У датчика '+ str(battery) + ' процентов заряда баттареи.'
         return
 
     if req['request']['original_utterance'].lower() in [
